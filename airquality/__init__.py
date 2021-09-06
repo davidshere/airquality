@@ -35,5 +35,11 @@ def create_app(test_config=None):
         two_point_five, ten = get_pmi_result()
         return f"PMI 2.5: {two_point_five}, PMI 10: {ten}\n"
 
+    from . import db
+    db.init_app(app)
+
+    from . import readings
+    app.register_blueprint(readings.bp)
+
     return app
 

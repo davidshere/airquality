@@ -8,4 +8,5 @@ def get_pmi_result():
     return sensor.query()
 
 if __name__ == "__main__":
-  print(get_pmi_result())
+  two_point_five, ten = get_pmi_result()
+  print(f"pmi25={two_point_five}&pmi10={ten}")
