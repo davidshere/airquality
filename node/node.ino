@@ -10,9 +10,7 @@ int rxPin = 2;
 int txPin = 3;
 SoftwareSerial sds(rxPin, txPin);
 
-// Byte of array representing the address. This is the address
-// where we will send the data. This should be the same on the
-// recieving side
+// 00001=base, 00002=node
 const byte address[][6] = {"00001", "00002"};
 
 
@@ -26,8 +24,8 @@ void setup() {
 	radio.begin();
 
   // Setting the address where we will send the data
-	radio.openWritingPipe(address);
-
+	radio.openWritingPipe(address[0]);
+  // radio.openReadingPipe(0, address[1]);
   // You can set it as a minimum or maximum depending on the distance
   // between the transmitter and the reciever
 	radio.setPALevel(RF24_PA_MIN);
