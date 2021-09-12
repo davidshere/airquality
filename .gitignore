@@ -1,2 +1,5 @@
+*.sqlite
+*.swp
 venv/
 __pycache__/
+*.env
