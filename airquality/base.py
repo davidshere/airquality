@@ -1,10 +1,14 @@
 import struct
 import time
+from typing import List
 
 import board
 import digitalio
+from more_itertools import chunked
 
 from circuitpython_nrf24l01.rf24 import RF24
+
+from sds011 import parse_response
 
 csn = digitalio.DigitalInOut(board.D7)
 ce = digitalio.DigitalInOut(board.D8)
@@ -28,23 +32,23 @@ nrf.payload_length = 32
 
 import base64
 
-count=5
-while count:
+def get_reading() -> bytearray:
   if nrf.available():
       payload_size, pipe_number = nrf.any(), nrf.pipe
-      buf = nrf.read()
+      return nrf.read()
 
-      result = b""
-      for i in range(0, 10, 2):
+def parse_response(resp: bytearray) -> List[bytes]:
+  """ Turns from a bytearray to a list of encoded bytes """
+  result = b''
+  for i in range(0, 10, 2):
+    result += base64.b16encode(bytes(resp)[i: i+2])
+  return [b''.join([chr(x).encode() for x in a]) for a in chunked(result, 2)]
 
-          b = base64.b16encode(bytes(buf)[i: i+2])
-          b = b if not b.endswith(b'00') else b[:2] + b'0'
-          result += b
-      print(result)
-  else:
-    time.sleep(1)
-    continue
-  count-=1
-
-  # AAC04D01912A8415AB
-  # AAC04D01912A8415AB
+if __name__ == "__main__":
+  while True:
+    reading = get_reading()
+    if reading is not None:
+      print(parse_response(reading))
+      break
+    else:
+      time.sleep(1)
