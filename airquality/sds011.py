@@ -4,8 +4,6 @@ import time
 from enum import Enum
 from typing import List, Tuple
 
-PORT = serial.Serial("/dev/ttyUSB1", 9600, timeout=5)
-
 
 WRITE_COMMAND_SIZE = 19
 READ_COMMAND_SIZE = 10
@@ -79,7 +77,7 @@ def check_response_checksum(response):
         return True
 
 
-def _execute(cmd: bytes, port=PORT):
+def _execute(cmd: bytes):
     # Clear everyting that's come into the port - otherwise the
     # command response may be at the back of a long queue
     port.flushInput()
@@ -234,6 +232,7 @@ def parse_working_period_response(result: List[bytes]):
 #
 # Methods to fetch and parse messages from the device
 #
+"""
 def get_response(port=PORT) -> bytes:
     resp = port.read(10)
     if not resp:
@@ -250,7 +249,7 @@ def get_response(port=PORT) -> bytes:
         for i in range(0, len(encoded), 2)
     ]
     return chunked[1: -1]
-
+"""
 def parse_response(response: List[bytes]):
     if response is None:
         print("response is None")
@@ -269,19 +268,3 @@ def parse_response(response: List[bytes]):
         return parse_working_period_response(response)
     else:
         raise Exception(f"No response parser found for {cmd}")
-
-print('reporting')
-print(data_reporting_mode(Action.SET, ReportingMode.QUERY, device_id=(b'2A', b'84')))
-print(parse_response(get_response()))
-
-print("\npmi")
-print(query_pmi())
-print(parse_response(get_response()))
-
-print('\nsleep and work')
-print(sleep_and_work(Action.SET, DeviceStatus.WORK, device_id=(b'2A', b'84')))
-print(parse_response(get_response()))
-
-print('\nworking period')
-print(working_period(Action.GET, WorkingPeriod.CONTINUOUS))
-print(parse_response(get_response()))
