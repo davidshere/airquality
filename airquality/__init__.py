@@ -37,10 +37,9 @@ def create_app(test_config=None):
     # initialize scheduler
     scheduler = APScheduler()
 
-    @scheduler.task('interval', id='fetch_reading', seconds=5, misfire_grace_time=900)
+    @scheduler.task('interval', id='fetch_reading', seconds=1, misfire_grace_time=900)
     def fetch_reading():
         results = get_results()
-        print(results)
         if results:
             pm25, pm10, _ = results
             with scheduler.app.app_context():

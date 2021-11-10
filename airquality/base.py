@@ -7,7 +7,6 @@ from typing import List
 
 import board
 import digitalio
-import requests
 from more_itertools import chunked
 
 from circuitpython_nrf24l01.rf24 import RF24
