@@ -59,17 +59,7 @@ if __name__ == "__main__":
   nrf.flush_rx()
   while True:
     result = get_results()
-    if result:
-      pm25, pm10, device_id = result
-
-      requests.post(
-        'http://127.0.0.1:5000',
-        data={
-            "pmi25": pm25,
-            "pmi10": pm10,
-            "device_id": b''.join(device_id).decode()
-        }
-      )
+    print(result)
     nrf.flush_rx()
     time.sleep(5)
 

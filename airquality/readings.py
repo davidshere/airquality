@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('readings', __name__)
 
-@bp.route('/', methods=('GET'))
+@bp.route('/', methods=('GET',))
 def readings():
     pmi = {
         '2.5': 99,
