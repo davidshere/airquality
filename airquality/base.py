@@ -12,7 +12,7 @@ from more_itertools import chunked
 
 from circuitpython_nrf24l01.rf24 import RF24
 
-from sds011 import parse_response
+from airquality.sds011 import parse_response
 
 logger = logging.getLogger(__name__)
 
@@ -46,16 +46,22 @@ def process_raw_response(resp: bytearray) -> List[bytes]:
     result += base64.b16encode(bytes(resp)[i: i+2])
   return [b''.join([chr(x).encode() for x in a]) for a in chunked(result, 2)]
 
+def get_results():
+  reading = get_reading()
+  if not reading:
+    return None
+
+  response = parse_response(process_raw_response(reading)[1:-1])
+  return response
+
 if __name__ == "__main__":
   nrf.listen = True
   nrf.flush_rx()
   while True:
-    reading = get_reading()
-    print(f"reading: {reading}")
-    if reading:
-      processed = parse_response(process_raw_response(reading)[1:-1])
-      print(processed)
-      pm25, pm10, device_id = processed
+    result = get_results()
+    if result:
+      pm25, pm10, device_id = result
+
       requests.post(
         'http://127.0.0.1:5000',
         data={
