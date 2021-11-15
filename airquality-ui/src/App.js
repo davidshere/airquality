@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Chart from 'chart.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function HeaderCard(props) {
@@ -12,6 +13,36 @@ function HeaderCard(props) {
   );
  }
 
+function renderChart(pmi25, pmi10) {
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Object.keys(pmi25),
+      datasets: [
+        {
+          label: 'PMI 2.5',
+          data: Object.values(pmi25),
+          borderWidth: 1
+        },
+        {
+          label: 'PMI 10',
+          data: Object.values(pmi10),
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  return myChart
+}
+
 function App() {
   const [current25, setCurrent25] = useState(0);
   const [current10, setCurrent10] = useState(0);
@@ -19,15 +50,21 @@ function App() {
   useEffect(() => {
     document.title = 'Home air qualty dashboard'
   
-    fetch('/current').then(d => {console.log(d); return d}).then(res => res.json()).then(data => {
+    fetch('/current').then(res => res.json()).then(data => {
       setCurrent25(data['2.5']);
-      setCurrent10(data['10'])
+      setCurrent10(data['10']);
     }).catch(error => console.log(error));
-  }, []);
+
+    fetch('/series').then(res => res.json()).then(data => {
+      const pmi25 = Object.fromEntries(data.map(d => [d[0], d[1]]));
+      const pmi10 = Object.fromEntries(data.map(d => [d[0], d[2]]));
+      renderChart(pmi25, pmi10);
+
+    }).catch(error => console.log(error));  }, []);
 
   return (
     <div className="App">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"></link>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossOrigin="anonymous"></link>
 
       <div className="container">
         <div className="row text-center">
@@ -41,6 +78,9 @@ function App() {
             <HeaderCard particleSize="10" value={current10}></HeaderCard>
           </div>
         </div>
+      </div>
+      <div className="row">
+			<canvas id="myChart" width="400" height="400"></canvas>
       </div>
     </div>
   );
