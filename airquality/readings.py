@@ -1,4 +1,5 @@
 import functools
+from datetime import tzinfo
 import json
 import logging
 
@@ -8,11 +9,12 @@ from flask import (
 
 from airquality.db import get_db
 
+
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('readings', __name__)
 
-@bp.route('/', methods=('GET',))
+@bp.route('/current', methods=('GET',))
 def readings():
     db = get_db()
     pmi25, pmi10 = db.execute(
@@ -22,9 +24,9 @@ def readings():
         '2.5': pmi25,
         '10': pmi10,
     }
-    return render_template('index.html', pmi=pmi)
+    return jsonify(pmi) 
 
-@bp.route('/readings', methods=('GET',))
+@bp.route('/series', methods=('GET',))
 def timing():
     db = get_db()
     query = """
@@ -33,7 +35,7 @@ def timing():
         where recorded_at > (SELECT datetime(max(recorded_at), '-1 days') from readings)
         order by recorded_at asc;
     """
-    results = db.execute(query).fetchall()
-    return jsonify([(a[0],a[1],a[2]) for a in results])
+    results = [(a[0].astimezone(),a[1],a[2]) for a in db.execute(query).fetchall()]
+    return jsonify(results)
 
 
