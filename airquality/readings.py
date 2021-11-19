@@ -46,4 +46,4 @@ def timing():
 
 @bp.route('/', methods=('GET',))
 def index():
-    return render_template('../airquality-ui/build/index.html')
+    return render_template('index.html')
