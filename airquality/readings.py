@@ -1,7 +1,8 @@
 import functools
-from datetime import tzinfo
+from datetime import datetime
 import json
 import logging
+from typing import List
 
 from flask import (
     Blueprint, jsonify, flash, g, redirect, render_template, request, session, url_for
@@ -35,7 +36,8 @@ def timing():
         where recorded_at > (SELECT datetime(max(recorded_at), '-1 days') from readings)
         order by recorded_at asc;
     """
-    results = [(a[0].astimezone(),a[1],a[2]) for a in db.execute(query).fetchall()]
+    results: List[datetime, float, float]
+    results = [(a[0].isoformat(),a[1],a[2]) for a in db.execute(query).fetchall()]
     return jsonify(results)
 
 

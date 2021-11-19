@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { parseISO, format } from  'date-fns'
 import Chart from 'chart.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,10 +16,15 @@ function HeaderCard(props) {
 
 function renderChart(pmi25, pmi10) {
   const ctx = document.getElementById('myChart').getContext('2d');
+
+  // PPpp = Nov 18, 2021, 10:21:25 PM
+  // https://date-fns.org/v2.25.0/docs/format
+  const dates = Object.keys(pmi25).map(dt => format(parseISO(dt), 'PPpp'))
+
   const myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: Object.keys(pmi25),
+      labels: dates,
       datasets: [
         {
           label: 'PMI 2.5',
@@ -34,12 +40,25 @@ function renderChart(pmi25, pmi10) {
     },
     options: {
       scales: {
+        x: {
+          type: "timeseries",
+        },
         y: {
           beginAtZero: true
+        },
+        xAxes: {
+          ticks: {
+            max: 5
+          }
+        },
+        ticks: {
+          maxTicksLimit: 10,
         }
-      }
+      },
+      
     }
   });
+  console.log(myChart);
   return myChart
 }
 
@@ -78,10 +97,11 @@ function App() {
             <HeaderCard particleSize="10" value={current10}></HeaderCard>
           </div>
         </div>
+        <div className="row">
+			    <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
       </div>
-      <div className="row">
-			<canvas id="myChart" width="400" height="400"></canvas>
-      </div>
+
     </div>
   );
 }

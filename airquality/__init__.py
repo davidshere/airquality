@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from flask import Flask
@@ -45,9 +46,9 @@ def create_app(test_config=None):
             with scheduler.app.app_context():
                 db = get_db()
                 db.execute(
-                    'INSERT INTO readings(pmi25, pmi10) '
-                    'VALUES (?, ?);',
-                    (pm25, pm10)
+                    'INSERT INTO readings(pmi25, pmi10, recorded_at) '
+                    'VALUES (?, ?, ?);',
+                    (pm25, pm10, datetime.datetime.now())
                 )
                 db.commit()
 
