@@ -44,20 +44,11 @@ function renderChart(pmi25, pmi10) {
     },
     options: {
       scales: {
-        x: {
-          type: "timeseries",
-        },
-        y: {
-          beginAtZero: true
-        },
-        xAxes: {
+        yAxes: [{
           ticks: {
-            max: 5
+            beginAtZero: true
           }
-        },
-        ticks: {
-          maxTicksLimit: 10,
-        }
+        }],
       },
       
     }

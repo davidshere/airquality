@@ -9,6 +9,7 @@ from flask import (
 )
 
 from airquality.db import get_db
+from airquality.utils import get_aqi, Particle
 
 
 logger = logging.getLogger(__name__)
@@ -22,8 +23,8 @@ def readings():
         "SELECT pmi25, pmi10 from readings where recorded_at = (SELECT max(recorded_at) from readings);"
     ).fetchone()
     pmi = {
-        '2.5': pmi25,
-        '10': pmi10,
+        '2.5': get_aqi(pmi25, Particle.TWO_POINT_FIVE),
+        '10': get_aqi(pmi10, Particle.TEN),
     }
     return jsonify(pmi) 
 
@@ -37,7 +38,10 @@ def timing():
         order by recorded_at asc;
     """
     results: List[datetime, float, float]
-    results = [(a[0].isoformat(),a[1],a[2]) for a in db.execute(query).fetchall()]
+    results = [
+        (a[0].isoformat(),get_aqi(a[1], Particle.TWO_POINT_FIVE) ,get_aqi(a[2], Particle.TEN))
+        for a in db.execute(query).fetchall()
+    ]
     return jsonify(results)
 
 
