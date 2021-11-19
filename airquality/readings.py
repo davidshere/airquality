@@ -44,4 +44,6 @@ def timing():
     ]
     return jsonify(results)
 
-
+@bp.route('/', methods=('GET',))
+def index():
+    return render_template('../airquality-ui/build/index.html')

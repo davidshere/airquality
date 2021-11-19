@@ -50,7 +50,6 @@ function renderChart(pmi25, pmi10) {
           }
         }],
       },
-      
     }
   });
   return myChart
