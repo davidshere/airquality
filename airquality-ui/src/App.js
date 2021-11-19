@@ -29,12 +29,16 @@ function renderChart(pmi25, pmi10) {
         {
           label: 'PMI 2.5',
           data: Object.values(pmi25),
-          borderWidth: 1
+          borderWidth: 1,
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
         },
         {
           label: 'PMI 10',
           data: Object.values(pmi10),
-          borderWidth: 1
+          borderWidth: 1,
+          fill: false,
+          borderColor: 'rgb(192, 75, 75)'
         },
       ]
     },
@@ -58,7 +62,6 @@ function renderChart(pmi25, pmi10) {
       
     }
   });
-  console.log(myChart);
   return myChart
 }
 
