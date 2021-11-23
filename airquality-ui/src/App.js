@@ -3,12 +3,31 @@ import { parseISO, format } from  'date-fns'
 import Chart from 'chart.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const aqiMappings = [
+  ['Good', 0],
+  ['Moderate', 51],
+  ['USG', 101],
+  ['Unhealth', 151],
+  ['Very Unhealthy', 201],
+  ['Hazardous', 301]
+]
+
+function getStatus(aqi) {
+  for (const mapping of aqiMappings) {
+    console.log(aqi, mapping, mapping[1])
+    if (aqi >= mapping[1]){
+      return mapping[0]
+    }
+  }
+}
+
 function HeaderCard(props) {
   return (
-      <div className="card">
+      <div className="card custom-color bg-gradient-custom-color bg-custom-color">
         <div className="card-body">
           <h5 className="card-title">PMI {props.particleSize}</h5>
           <p className="card-text">{ props.value }</p>
+          <p className="card-text">Status: { getStatus(props.value) }</p>
         </div>
     </div>
   );
@@ -22,7 +41,7 @@ function renderChart(pmi25, pmi10) {
   const dates = Object.keys(pmi25).map(dt => format(parseISO(dt), 'PPpp'))
 
   const myChart = new Chart(ctx, {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: dates,
       datasets: [
@@ -30,15 +49,16 @@ function renderChart(pmi25, pmi10) {
           label: 'PMI 2.5',
           data: Object.values(pmi25),
           borderWidth: 1,
-          fill: false,
           borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgb(75, 192, 192)'
         },
         {
           label: 'PMI 10',
           data: Object.values(pmi10),
           borderWidth: 1,
           fill: false,
-          borderColor: 'rgb(192, 75, 75)'
+          borderColor: 'rgb(192, 75, 75)',
+          backgroundColor: 'rgb(192, 75, 75)'
         },
       ]
     },
@@ -76,13 +96,12 @@ function App() {
 
   return (
     <div className="App">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossOrigin="anonymous"></link>
 
       <div className="container">
         <div className="row text-center">
           <h1>Home Air Quality</h1>
         </div>
-        <div className="row justify-content-md-center">
+        <div className="row justify-content-center">
           <div className="col-2">
             <HeaderCard particleSize="2.5" value={current25}></HeaderCard>
           </div>
