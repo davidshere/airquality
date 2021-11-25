@@ -5,10 +5,12 @@ import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import List
+from xml.etree import ElementTree
 
 from flask import (
     Blueprint, jsonify, flash, g, redirect, render_template, request, session, url_for
 )
+import requests
 
 from airquality.db import get_db
 from airquality.utils import get_aqi, Particle
@@ -18,6 +20,16 @@ TIME_INTERVAL_MINUTES = 20
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('readings', __name__)
+
+@bp.route('/outside', methods=('GET',))
+def outside():
+    url = 'http://feeds.airnowapi.org/rss/realtime/98.xml'
+    print(url)
+    response = requests.get(url)
+    tree = ElementTree.fromstring(response.content)
+    print(tree)
+    breakpoint()
+    return ''
 
 @bp.route('/current', methods=('GET',))
 def readings():
