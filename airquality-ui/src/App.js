@@ -14,7 +14,6 @@ const aqiMappings = [
 
 function getStatus(aqi) {
   for (const mapping of aqiMappings) {
-    console.log(aqi, mapping, mapping[1])
     if (aqi >= mapping[1]){
       return mapping[0]
     }
@@ -81,17 +80,17 @@ function App() {
 
   useEffect(() => {
     document.title = 'Home air qualty dashboard'
-  
-    fetch('/current').then(res => res.json()).then(data => {
-      setCurrent25(data['2.5']);
-      setCurrent10(data['10']);
-    }).catch(error => console.log(error));
 
     fetch('/series').then(res => res.json()).then(data => {
       const pmi25 = Object.fromEntries(data.map(d => [d[0], d[1]]));
       const pmi10 = Object.fromEntries(data.map(d => [d[0], d[2]]));
-      renderChart(pmi25, pmi10);
 
+      const keys = Object.keys(pmi25)
+      const lastKey = keys[keys.length - 1];
+      setCurrent25(pmi25[lastKey])
+      setCurrent10(pmi10[lastKey])
+
+      renderChart(pmi25, pmi10);
     }).catch(error => console.log(error));  }, []);
 
   return (

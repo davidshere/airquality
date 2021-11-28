@@ -15,12 +15,14 @@ logger = logging.getLogger(__name__)
 logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 
-def dynamo_put(client, device, pmi25, pmi10):
+def dynamo_put(client, device, pmi25, pmi10, recorded_at=None):
     client.put_item(
         TableName='Readings',
         Item={
             'DeviceId': {"S": device},
-            'RecordedAt': {"S": datetime.datetime.now().isoformat()},
+            'RecordedAt': {
+                "S": recorded_at or datetime.datetime.now().isoformat()
+            },
             'pmi2.5': {"N": str(pmi25)},
             'pmi10': {"N": str(pmi10)}
         }

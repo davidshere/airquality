@@ -7,18 +7,20 @@ from datetime import datetime, timedelta
 from typing import List
 from xml.etree import ElementTree
 
+import boto3
+from boto3.dynamodb.conditions import Key
 from flask import (
     Blueprint, jsonify, flash, g, redirect, render_template, request, session, url_for
 )
 import requests
 
-from airquality.db import get_db
 from airquality.utils import get_aqi, Particle
 
 TIME_INTERVAL_MINUTES = 20
 
 logger = logging.getLogger(__name__)
-
+dynamo = boto3.resource('dynamodb')
+readings = dynamo.Table('Readings')
 bp = Blueprint('readings', __name__)
 
 @bp.route('/outside', methods=('GET',))
@@ -31,27 +33,18 @@ def outside():
     breakpoint()
     return ''
 
-@bp.route('/current', methods=('GET',))
-def readings():
-    db = get_db()
-    pmi25, pmi10 = db.execute(
-        "SELECT pmi25, pmi10 from readings where recorded_at = (SELECT max(recorded_at) from readings);"
-    ).fetchone()
-    pmi = {
-        '2.5': get_aqi(pmi25, Particle.TWO_POINT_FIVE),
-        '10': get_aqi(pmi10, Particle.TEN),
-    }
-    return jsonify(pmi) 
-
 def get_last_day():
-    db = get_db()
-    query = """
-        SELECT recorded_at, pmi25, pmi10
-        from readings 
-        where recorded_at > (SELECT datetime(max(recorded_at), '-1 days') from readings)
-        order by recorded_at asc;
-    """
-    return db.execute(query).fetchall()
+    last_day = datetime.now() - timedelta(days=1)
+
+    items = readings.query(
+        TableName='Readings',
+        KeyConditionExpression=Key('RecordedAt').gt(last_day.isoformat()) & Key('DeviceId').eq('2A84')
+    )['Items']
+
+    items = sorted(items, key=lambda x: x['RecordedAt'])
+    for res in items:
+        yield datetime.fromisoformat(res['RecordedAt']), float(res['pmi2.5']), float(res['pmi10'])
+
 
 @dataclasses.dataclass
 class TimingResponse:
@@ -83,7 +76,7 @@ def average_aqi_from_buckets(buckets):
     return response
 
 @bp.route('/series', methods=('GET',))
-def timing():
+def series():
     results = [
         TimingResponse(
             a[0],

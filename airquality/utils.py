@@ -40,7 +40,7 @@ LEVELS_10 = [
     (425, 604),
 ]
 
-def get_aqi(conc, particle: Particle) -> float:
+def get_aqi(conc: float, particle: Particle) -> float:
     if particle == Particle.TWO_POINT_FIVE:
         levels = LEVELS_25
         conc = round(conc, 1)
