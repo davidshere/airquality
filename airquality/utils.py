@@ -58,6 +58,7 @@ def get_aqi(conc: float, particle: Particle) -> float:
             continue
         else:
             break
+
     aqi = ((level.aqi_high - level.aqi_low)/(level.conc_high-level.conc_low)) * (conc - level.conc_low) + level.aqi_low
     return round(aqi)
 

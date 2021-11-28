@@ -45,7 +45,6 @@ def get_last_day():
     for res in items:
         yield datetime.fromisoformat(res['RecordedAt']), float(res['pmi2.5']), float(res['pmi10'])
 
-
 @dataclasses.dataclass
 class TimingResponse:
     recorded_at: datetime
@@ -70,8 +69,8 @@ def average_aqi_from_buckets(buckets):
         ten = [a.aqi_ten for a in bucket]
         response.append([
             marker.isoformat(),
-            sum(two_point_five)/len(two_point_five),
-            sum(ten)/len(ten)
+            round(sum(two_point_five)/len(two_point_five)),
+            round(sum(ten)/len(ten))
         ])
     return response
 
@@ -87,7 +86,6 @@ def series():
     ]
     buckets = timing_results_to_buckets(results)
     average_aqi = average_aqi_from_buckets(buckets)
-
     return jsonify(average_aqi)
 
 @bp.route('/', methods=('GET',))

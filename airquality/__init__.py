@@ -7,7 +7,6 @@ from flask import Flask
 from flask_apscheduler import APScheduler
 
 from airquality.base import get_results
-from airquality.db import get_db
 
 dynamo = boto3.client('dynamodb')
 
@@ -54,9 +53,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    from . import db
-    db.init_app(app)
 
     from . import readings
     app.register_blueprint(readings.bp)
