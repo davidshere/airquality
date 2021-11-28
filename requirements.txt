@@ -1,14 +1,8 @@
-Adafruit-Blinka==6.13.0
-adafruit-circuitpython-busdevice==5.0.6
-Adafruit-PlatformDetect==3.15.3
-Adafruit-PureIO==1.1.9
-APScheduler==3.8.1
 backports.zoneinfo==0.2.1
 boto3==1.20.14
 botocore==1.23.14
 certifi==2021.10.8
 charset-normalizer==2.0.7
-circuitpython-nrf24l01==2.0.2
 click==7.1.2
 Flask==1.1.2
 Flask-APScheduler==1.12.2
@@ -23,8 +17,6 @@ more-itertools==8.9.0
 mypy==0.782
 mypy-extensions==0.4.3
 pdfminer==20191125
-pkg-resources==0.0.0
-py-sds011==0.9
 pycryptodome==3.9.8
 pyftdi==0.53.3
 pyserial==3.5
@@ -34,12 +26,8 @@ pytz==2021.3
 pytz-deprecation-shim==0.1.0.post0
 pyusb==1.2.1
 requests==2.26.0
-RF24==1.4.1
-rpi-ws281x==4.3.0
-RPi.GPIO==0.7.0
 s3transfer==0.5.0
 six==1.16.0
-SQLAlchemy==1.4.26
 sysv-ipc==1.1.0
 typed-ast==1.4.1
 typing-extensions==3.7.4.2

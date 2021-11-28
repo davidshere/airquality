@@ -11,7 +11,7 @@ from more_itertools import chunked
 
 from circuitpython_nrf24l01.rf24 import RF24
 
-from airquality.sds011 import parse_response
+from sds011 import parse_response
 
 logger = logging.getLogger(__name__)
 

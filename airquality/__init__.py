@@ -1,31 +1,12 @@
-import datetime
 import logging
 import os
 
-import boto3
 from flask import Flask
-from flask_apscheduler import APScheduler
 
-from airquality.base import get_results
-
-dynamo = boto3.client('dynamodb')
 
 logger = logging.getLogger(__name__)
 logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-
-def dynamo_put(client, device, pmi25, pmi10, recorded_at=None):
-    client.put_item(
-        TableName='Readings',
-        Item={
-            'DeviceId': {"S": device},
-            'RecordedAt': {
-                "S": recorded_at or datetime.datetime.now().isoformat()
-            },
-            'pmi2.5': {"N": str(pmi25)},
-            'pmi10': {"N": str(pmi10)}
-        }
-    )
 
 def create_app(test_config=None):
     # create and configure the app
@@ -56,32 +37,6 @@ def create_app(test_config=None):
 
     from . import readings
     app.register_blueprint(readings.bp)
-
-    # initialize scheduler
-    scheduler = APScheduler()
-
-    @scheduler.task('interval', id='fetch_reading', seconds=1, misfire_grace_time=900)
-    def fetch_reading():
-        results = get_results()
-        if results:
-            pm25, pm10, device_id = results
-            dynamo_put(
-                dynamo,
-                b''.join(device_id).decode(),
-                pm25,
-                pm10
-            )
-            with scheduler.app.app_context():
-                db = get_db()
-                db.execute(
-                    'INSERT INTO readings(pmi25, pmi10, recorded_at) '
-                    'VALUES (?, ?, ?);',
-                    (pm25, pm10, datetime.datetime.now())
-                )
-                db.commit()
-
-    scheduler.init_app(app)
-    scheduler.start()
 
     return app
 
