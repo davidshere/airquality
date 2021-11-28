@@ -1,6 +1,4 @@
 import dataclasses
-import functools
-import json
 import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -10,7 +8,7 @@ from xml.etree import ElementTree
 import boto3
 from boto3.dynamodb.conditions import Key
 from flask import (
-    Blueprint, jsonify, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, jsonify,render_template
 )
 import requests
 
