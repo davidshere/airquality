@@ -100,11 +100,11 @@ function App() {
         <div className="row text-center">
           <h1>Home Air Quality</h1>
         </div>
-        <div className="row justify-content-center">
-          <div className="col-2">
+        <div className="row text-center">
+          <div className="col-sm-2 offset-md-4">
             <HeaderCard particleSize="2.5" value={current25}></HeaderCard>
           </div>
-          <div className="col-2">
+          <div className="col-sm-2">
             <HeaderCard particleSize="10" value={current10}></HeaderCard>
           </div>
         </div>
