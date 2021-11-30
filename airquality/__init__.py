@@ -12,8 +12,8 @@ def create_app(test_config=None):
     app = Flask(
         __name__,
         instance_relative_config=True,
-        template_folder='/home/pi/src/airquality/airquality-ui/build/',
-        static_folder='/home/pi/src/airquality/airquality-ui/build/static/'
+        template_folder='build/',
+        static_folder='build/static/'
     )
     app.config.from_mapping(
         SECRET_KEY='dev',

@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: airquality/
+      dockerfile: Dockerfile.api
+    depends_on:
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
+    volumes:
+      - $HOME/.aws/:/root/.aws/:ro
+      - $HOME/src/airquality/airquality/:/app/airquality
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
