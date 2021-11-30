@@ -1,4 +1,5 @@
-airquality-ui/
 instance/
+node_modules
+build
 venv/
 

@@ -1,5 +1,6 @@
 import dataclasses
 import logging
+import os
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import List
@@ -8,13 +9,14 @@ from xml.etree import ElementTree
 import boto3
 from boto3.dynamodb.conditions import Key
 from flask import (
-    Blueprint, jsonify,render_template
+    Blueprint, jsonify,render_template, request
 )
 import requests
 
 from airquality.utils import get_aqi, Particle
 
 TIME_INTERVAL_MINUTES = 20
+DEV_ENVIRON_LAST_DAY = datetime.fromisoformat("2021-11-27T20:33:06")
 
 logger = logging.getLogger(__name__)
 dynamo = boto3.resource('dynamodb')
@@ -32,7 +34,10 @@ def outside():
     return ''
 
 def get_last_day():
-    last_day = datetime.now() - timedelta(days=1)
+    if os.environ.get('FLASK_ENV') == "development":
+        last_day = DEV_ENVIRON_LAST_DAY
+    else:
+        last_day = datetime.now() - timedelta(days=1)
 
     items = readings.query(
         TableName='Readings',
@@ -82,6 +87,7 @@ def series():
         )
         for a in get_last_day()
     ]
+
     buckets = timing_results_to_buckets(results)
     average_aqi = average_aqi_from_buckets(buckets)
     return jsonify(average_aqi)
@@ -89,3 +95,4 @@ def series():
 @bp.route('/', methods=('GET',))
 def index():
     return render_template('index.html')
+

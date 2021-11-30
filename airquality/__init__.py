@@ -5,7 +5,6 @@ from flask import Flask
 
 
 logger = logging.getLogger(__name__)
-logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 
 def create_app(test_config=None):
@@ -19,7 +18,6 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'airquality.sqlite'),
-        SCHEDULER_API_ENABLED=True,
     )
 
     if test_config is None:
