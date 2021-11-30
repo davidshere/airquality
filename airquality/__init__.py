@@ -7,9 +7,9 @@ from flask import Flask
 logger = logging.getLogger(__name__)
 
 
-def create_app(test_config=None):
+def create_app(flask=Flask, test_config=None):
     # create and configure the app
-    app = Flask(
+    app = flask(
         __name__,
         instance_relative_config=True,
         template_folder='build/',
