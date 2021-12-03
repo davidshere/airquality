@@ -13,7 +13,7 @@ from flask import (
 )
 import requests
 
-from airquality.utils import get_aqi, Particle
+from app.utils import get_aqi, Particle
 
 TIME_INTERVAL_MINUTES = 20
 DEV_ENVIRON_LAST_DAY = datetime.fromisoformat("2021-11-27T20:33:06")
@@ -94,5 +94,6 @@ def series():
 
 @bp.route('/', methods=('GET',))
 def index():
+    import os
     return render_template('index.html')
 

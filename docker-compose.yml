@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: .
+      context: airquality-api
       dockerfile: Dockerfile.api
     depends_on:
       - "dynamodb-local"
@@ -9,7 +9,7 @@ services:
       - "dynamodb-local"
     volumes:
       - $HOME/.aws/:/root/.aws/:ro
-      - $HOME/src/airquality/airquality/:/app/airquality
+      - $HOME/src/airquality/airquality-api/app/:/app/app
     ports:
       - "5000:5000"
     expose:

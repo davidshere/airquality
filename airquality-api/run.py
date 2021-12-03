@@ -1,5 +1,5 @@
 from flask import Flask
-from airquality import create_app
+from app import create_app
 
 http_server = create_app(Flask)
 

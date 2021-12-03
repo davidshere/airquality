@@ -4,6 +4,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.8
 click==8.0.3
 Flask==2.0.2
+flask-lambda-python36==0.1.0
 gunicorn==20.1.0
 idna==3.3
 importlib-metadata==4.8.2
