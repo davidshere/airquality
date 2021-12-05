@@ -1,10 +1,5 @@
-import logging
-import os
-
 from flask import Flask
 
-
-logger = logging.getLogger(__name__)
 
 def create_app(flask=Flask, test_config=None):
     # create and configure the app

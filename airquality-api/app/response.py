@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from app.aqi import get_aqi, Particle
+
 TIME_INTERVAL_MINUTES = 20
 DEV_ENVIRON_LAST_DAY = datetime.fromisoformat("2021-11-27T20:33:06")
 
@@ -13,17 +15,12 @@ if os.environ.get('FLASK_ENV') == 'development':
     dynamo = boto3.resource('dynamodb', endpoint_url='http://dynamodb-local:8000')
     last_day = DEV_ENVIRON_LAST_DAY
 else:
-    dynamo = boto3.resource('dynamo')
+    dynamo = boto3.resource('dynamodb')
     last_day = datetime.now() - timedelta(days=1)
-
+ 
 readings = dynamo.Table('Readings')
-
+ 
 def get_last_day(resource=readings, last_day=last_day):
-    if os.environ.get('FLASK_ENV') == "development":
-        last_day = DEV_ENVIRON_LAST_DAY
-    else:
-        last_day = datetime.now() - timedelta(days=1)
-
     items = resource.query(
         TableName='Readings',
         KeyConditionExpression=Key('RecordedAt').gt(last_day.isoformat()) & Key('DeviceId').eq('2A84')
@@ -62,3 +59,15 @@ def average_aqi_from_buckets(buckets):
         ])
     return response
 
+def get_last_day_bucketed_aqi(event=None, context=None):
+    results = [
+        TimingResponse(
+            a[0],
+            get_aqi(a[1],Particle.TWO_POINT_FIVE),
+            get_aqi(a[2], Particle.TEN)
+        )
+        for a in get_last_day()
+    ]
+
+    buckets = timing_results_to_buckets(results)
+    return average_aqi_from_buckets(buckets)

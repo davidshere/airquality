@@ -8,15 +8,12 @@ services:
     links:
       - "dynamodb-local"
     volumes:
-      - $HOME/.aws/config:/root/.aws/config:ro
+      - $HOME/.aws/:/root/.aws/:ro
       - $HOME/src/airquality/airquality-api/app/:/app/app
     ports:
       - "5000:5000"
     expose:
       - "5000"
-    environment:
-      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
-      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
 
   dynamodb-local:
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"

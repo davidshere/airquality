@@ -6,8 +6,7 @@ from flask import (
 )
 import requests
 
-from app.utils.aqi import get_aqi, Particle
-from app.utils.response import get_last_day, TimingResponse, timing_results_to_buckets, average_aqi_from_buckets
+from app.response import get_last_day_bucketed_aqi
 
 bp = Blueprint('readings', __name__)
 
@@ -24,17 +23,7 @@ def outside():
 
 @bp.route('/series', methods=('GET',))
 def series():
-    results = [ 
-        TimingResponse(
-            a[0],
-            get_aqi(a[1],Particle.TWO_POINT_FIVE),
-            get_aqi(a[2], Particle.TEN)
-        )
-        for a in get_last_day()
-    ]
-
-    buckets = timing_results_to_buckets(results)
-    average_aqi = average_aqi_from_buckets(buckets)
+    average_aqi = get_last_day_bucketed_aqi()
     return jsonify(average_aqi)
 
 @bp.route('/', methods=('GET',))
