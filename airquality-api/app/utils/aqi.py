@@ -1,5 +1,4 @@
 import dataclasses
-from typing import Tuple
 
 class Particle:
     TWO_POINT_FIVE = '2.5'
@@ -50,7 +49,7 @@ def get_aqi(conc: float, particle: Particle) -> float:
 
     aqi_levels = [
         AQILevel(breaks[0], lvl[0], lvl[1], breaks[1], breaks[2])
-        for breaks, lvl in zip(AQI_BREAKPOINTS, LEVELS_25)
+        for breaks, lvl in zip(AQI_BREAKPOINTS, levels)
     ]
 
     for level in aqi_levels:
@@ -62,6 +61,6 @@ def get_aqi(conc: float, particle: Particle) -> float:
     aqi = ((level.aqi_high - level.aqi_low)/(level.conc_high-level.conc_low)) * (conc - level.conc_low) + level.aqi_low
     return round(aqi)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     print(get_aqi(20, LEVELS_25))

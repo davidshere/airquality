@@ -1,0 +1,27 @@
+{
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "DeviceId",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "RecordedAt",
+                "AttributeType": "S"
+            }
+        ],
+        "TableName": "Readings",
+        "KeySchema": [
+            {
+                "AttributeName": "DeviceId",
+                "KeyType": "HASH"
+            },
+            {
+                "AttributeName": "RecordedAt",
+								"KeyType": "RANGE"
+						}
+				],
+				"ProvisionedThroughput": {
+						"ReadCapacityUnits": 1,
+						"WriteCapacityUnits": 1
+				}
+}

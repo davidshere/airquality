@@ -1,4 +1,7 @@
+.terraform/
+.vscode/
 node_modules/
+docker/
 *.sqlite
 *.swp
 venv/
