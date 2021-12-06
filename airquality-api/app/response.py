@@ -1,4 +1,5 @@
 import dataclasses
+import json
 import os
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -59,7 +60,7 @@ def average_aqi_from_buckets(buckets):
         ])
     return response
 
-def get_last_day_bucketed_aqi(event=None, context=None):
+def get_last_day_bucketed_aqi():
     results = [
         TimingResponse(
             a[0],
@@ -71,3 +72,12 @@ def get_last_day_bucketed_aqi(event=None, context=None):
 
     buckets = timing_results_to_buckets(results)
     return average_aqi_from_buckets(buckets)
+
+def lambda_handler(event=None, context=None):
+    response = {
+        'isBase64Encoded': False,
+        "statusCode": 200,
+        "headers": {},
+        "body": json.dumps(get_last_day_bucketed_aqi())
+    }
+    return response
