@@ -17,6 +17,16 @@ data "archive_file" "lambda_airquality_archive" {
     filename = "app/aqi.py"
   }
 
+  source {
+    content = file("${path.module}/../airquality-api/app/connection.py")
+    filename = "app/connection.py"
+  }
+
+  source {
+    content = file("${path.module}/../airquality-api/app/reading.py")
+    filename = "app/reading.py"
+  }
+
   output_path = "${path.module}/airquality.zip"
 }
 
@@ -157,7 +167,7 @@ resource "aws_apigatewayv2_integration" "airquality_reading_data" {
 resource "aws_apigatewayv2_route" "get_readings" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /series"
+  route_key = "GET /data"
   target    = "integrations/${aws_apigatewayv2_integration.airquality_reading_data.id}"
 }
 
