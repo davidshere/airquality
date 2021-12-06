@@ -4,22 +4,19 @@ import os
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-import boto3
 from boto3.dynamodb.conditions import Key
 
 from app.aqi import get_aqi, Particle
+from app.connection import readings
 
 TIME_INTERVAL_MINUTES = 20
 DEV_ENVIRON_LAST_DAY = datetime.fromisoformat("2021-11-27T20:33:06")
 
 if os.environ.get('FLASK_ENV') == 'development':
-    dynamo = boto3.resource('dynamodb', endpoint_url='http://dynamodb-local:8000')
     last_day = DEV_ENVIRON_LAST_DAY
 else:
-    dynamo = boto3.resource('dynamodb')
     last_day = datetime.now() - timedelta(days=1)
  
-readings = dynamo.Table('Readings')
  
 def get_last_day(resource=readings, last_day=last_day):
     items = resource.query(

@@ -13,7 +13,7 @@ const aqiMappings = [
 ]
 
 function getStatus(aqi) {
-  for (const mapping of aqiMappings) {
+  for (const mapping of aqiMappings.reverse()) {
     if (aqi >= mapping[1]){
       return mapping[0]
     }
@@ -82,7 +82,7 @@ function App() {
   useEffect(() => {
     document.title = 'Home air qualty dashboard'
 
-    fetch(seriesEndpoint + '/series').then(res => res.json()).then(data => {
+    fetch(seriesEndpoint + '/data').then(res => res.json()).then(data => {
       const pmi25 = Object.fromEntries(data.map(d => [d[0], d[1]]));
       const pmi10 = Object.fromEntries(data.map(d => [d[0], d[2]]));
 
