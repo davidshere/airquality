@@ -1,4 +1,5 @@
 .terraform/
+deploy/airquality.zip
 .vscode/
 node_modules/
 docker/
