@@ -47,6 +47,12 @@ resource "aws_lambda_function" "airquality_app" {
   source_code_hash = filemd5("${data.archive_file.lambda_airquality_archive.output_path}")
 
   role = aws_iam_role.lambda_exec.arn
+
+  environment {
+    variables = {
+      TZ =  "America/Los_Angeles"
+    }
+  }
 }
 
 
@@ -112,6 +118,7 @@ resource "aws_apigatewayv2_api" "lambda" {
     allow_headers = ["content-type"]
     max_age = 300
   }
+
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
