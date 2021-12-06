@@ -14,5 +14,5 @@ RUN mkdir /app/build
 COPY build/ /app/build
 
 RUN echo "FLASK_APP=run.py" >> /app/.env
-#RUN echo "FLASK_ENV=development" >> /app/.env
+RUN echo "FLASK_ENV=development" >> /app/.env
 CMD flask run --host 0.0.0.0
