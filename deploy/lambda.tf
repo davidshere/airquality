@@ -105,6 +105,13 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamo_read_policy_attachment"
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "serverless_lambda_gw"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "OPTIONS"]
+    allow_headers = ["content-type"]
+    max_age = 300
+  }
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {

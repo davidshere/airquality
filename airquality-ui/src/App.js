@@ -78,10 +78,11 @@ function App() {
   const [current25, setCurrent25] = useState(0);
   const [current10, setCurrent10] = useState(0);
 
+  const seriesEndpoint = process.env.NODE_ENV==="development" ? "" : process.env.REACT_APP_SERIES_ENDPOINT
   useEffect(() => {
     document.title = 'Home air qualty dashboard'
 
-    fetch('/series').then(res => res.json()).then(data => {
+    fetch(seriesEndpoint + '/series').then(res => res.json()).then(data => {
       const pmi25 = Object.fromEntries(data.map(d => [d[0], d[1]]));
       const pmi10 = Object.fromEntries(data.map(d => [d[0], d[2]]));
 
