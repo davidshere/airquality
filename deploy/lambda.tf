@@ -3,17 +3,17 @@ data "archive_file" "lambda_airquality_archive" {
   type = "zip"
 
   source {
-    content=""
+    content  = ""
     filename = "app/__init__.py"
   }
 
   source {
-    content=file("${path.module}/../airquality-api/app/response.py")
+    content  = file("${path.module}/../airquality-api/app/response.py")
     filename = "app/response.py"
   }
 
   source {
-    content=file("${path.module}/../airquality-api/app/aqi.py")
+    content  = file("${path.module}/../airquality-api/app/aqi.py")
     filename = "app/aqi.py"
   }
 
@@ -23,14 +23,14 @@ data "archive_file" "lambda_airquality_archive" {
 
 resource "aws_s3_bucket" "airquality_lambda_bucket" {
   bucket = "airquality-lambda"
-  acl = "private"
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_object" "lambda_package" {
-   bucket = aws_s3_bucket.airquality_lambda_bucket.id
-   key = "airquality.zip"
-   source = data.archive_file.lambda_airquality_archive.output_path 
-   etag = filemd5("${data.archive_file.lambda_airquality_archive.output_path}")
+  bucket = aws_s3_bucket.airquality_lambda_bucket.id
+  key    = "airquality.zip"
+  source = data.archive_file.lambda_airquality_archive.output_path
+  etag   = filemd5("${data.archive_file.lambda_airquality_archive.output_path}")
 
 }
 
@@ -38,7 +38,7 @@ resource "aws_lambda_function" "airquality_app" {
   function_name = "AirqualityWeb"
 
   s3_bucket = aws_s3_bucket.airquality_lambda_bucket.id
-  s3_key = aws_s3_bucket_object.lambda_package.key
+  s3_key    = aws_s3_bucket_object.lambda_package.key
 
   runtime = "python3.8"
   handler = "app.response.get_last_day_bucketed_aqi"
@@ -71,13 +71,31 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_execution_policy" {
+resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_dynamo_read_policy" {
+resource "aws_iam_policy" "lambda_dynamo_read_policy" {
+  name        = "dynamo-read-policy"
+  description = "A policy to allow lambda to read a specific dynamo table"
+
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Action" : [
+          "dynamodb:Query"
+        ],
+        "Effect" : "Allow",
+        "Resource" : "${aws_dynamodb_table.readings.arn}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_dynamo_read_policy_attachment" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+  policy_arn = aws_iam_policy.lambda_dynamo_read_policy.arn
 }
 
