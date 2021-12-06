@@ -1,8 +1,7 @@
-import dataclasses
 from xml.etree import ElementTree
 
 from flask import (
-    Blueprint, jsonify,render_template, request
+    Blueprint, jsonify, render_template
 )
 import requests
 
