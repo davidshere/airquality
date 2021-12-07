@@ -70,11 +70,3 @@ def get_last_day_bucketed_aqi():
     buckets = timing_results_to_buckets(results)
     return average_aqi_from_buckets(buckets)
 
-def lambda_handler(event=None, context=None):
-    response = {
-        'isBase64Encoded': False,
-        "statusCode": 200,
-        "headers": {},
-        "body": json.dumps(get_last_day_bucketed_aqi())
-    }
-    return response

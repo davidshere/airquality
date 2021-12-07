@@ -27,6 +27,11 @@ data "archive_file" "lambda_airquality_archive" {
     filename = "app/reading.py"
   }
 
+  source {
+    content = file("${path.module}/../airquality-api/app/lambda.py")
+    filename = "app/lambda.py"
+  }
+
   output_path = "${path.module}/airquality.zip"
 }
 
@@ -52,7 +57,7 @@ resource "aws_lambda_function" "airquality_app" {
   s3_key    = aws_s3_bucket_object.lambda_package.key
 
   runtime = "python3.8"
-  handler = "app.response.lambda_handler"
+  handler = "app.lambda.handler"
 
   source_code_hash = filemd5("${data.archive_file.lambda_airquality_archive.output_path}")
 

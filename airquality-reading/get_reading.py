@@ -1,35 +1,34 @@
 import datetime
 import time
 
-import boto3
+import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from base import get_results
 
-def dynamo_put(client, device, pmi25, pmi10, recorded_at=None):
-    client.put_item(
-        TableName='Readings',
-        Item={
-            'DeviceId': {"S": device},
-            'RecordedAt': {
-                "S": recorded_at or datetime.datetime.now().isoformat()
-            },
-            'pmi2.5': {"N": str(pmi25)},
-            'pmi10': {"N": str(pmi10)}
+API_URL = "https://3kwkbo4z21.execute-api.us-west-2.amazonaws.com/serverless_lambda_stage/data"
+
+def write_result(device, pmi25, pmi10, recorded_at=None):
+    return requests.post(
+        API_URL,
+        json={
+            'device_id': device,
+            'pmi2.5': pmi25,
+            'pmi10': pmi10
         }
     )
+
 def fetch_and_write_reading():
-    dynamo = boto3.client('dynamodb')
     results = get_results()
     if results:
         print(results, time.time())
         pm25, pm10, device_id = results
-        dynamo_put(
-            dynamo,
+        resp = write_result(
             b''.join(device_id).decode(),
             pm25,
             pm10
         )
+        print(resp)
 
 if __name__ == "__main__":
 
