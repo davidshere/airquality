@@ -108,7 +108,8 @@ resource "aws_iam_policy" "lambda_dynamo_read_policy" {
     "Statement" : [
       {
         "Action" : [
-          "dynamodb:Query"
+          "dynamodb:Query",
+          "dynamodb:PutItem"
         ],
         "Effect" : "Allow",
         "Resource" : "${aws_dynamodb_table.readings.arn}"
