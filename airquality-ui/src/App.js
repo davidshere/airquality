@@ -75,7 +75,7 @@ function renderChart(pmi25, pmi10) {
             maxTicksLimit: 24
           },
           time: {
-            // This is pretty much a lie but I haven't been able to get it to work
+            // This is pretty much a lie but I haven't been able to get it to work otherwise
             unit: 'hour',
             displayFormats: {
               hour: 'PPpp',
