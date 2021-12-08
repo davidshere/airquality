@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { parseISO, format } from  'date-fns'
+import 'chartjs-adapter-date-fns';
 import Chart from 'chart.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -37,7 +38,7 @@ function renderChart(pmi25, pmi10) {
 
   // PPpp = Nov 18, 2021, 10:21:25 PM
   // https://date-fns.org/v2.25.0/docs/format
-  const dates = Object.keys(pmi25).map(dt => format(parseISO(dt), 'PPpp'))
+  const dates = Object.keys(pmi25).map(dt => parseISO(dt))
 
   const myChart = new Chart(ctx, {
     type: 'bar',
@@ -68,6 +69,21 @@ function renderChart(pmi25, pmi10) {
             beginAtZero: true
           }
         }],
+        xAxes: [{
+          type: 'time',
+          ticks: {
+            maxTicksLimit: 24
+          },
+          time: {
+            // This is pretty much a lie but I haven't been able to get it to work
+            unit: 'hour',
+            displayFormats: {
+              hour: 'PPpp',
+            }
+          },
+          display: true,
+          distribution: 'series',
+        }]
       },
     }
   });
@@ -79,6 +95,7 @@ function App() {
   const [current10, setCurrent10] = useState(0);
 
   const seriesEndpoint = process.env.NODE_ENV==="development" ? "" : process.env.REACT_APP_SERIES_ENDPOINT
+
   useEffect(() => {
     document.title = 'Home air qualty dashboard'
 

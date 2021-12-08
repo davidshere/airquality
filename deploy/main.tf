@@ -46,21 +46,21 @@ resource "aws_s3_bucket" "airquality_bucket" {
   }
   policy = jsonencode(
     {
-    "Version": "2012-10-17",
-    "Statement": [
+      "Version" : "2012-10-17",
+      "Statement" : [
         {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::davids-airquality-static/*"
-            ]
+          "Sid" : "PublicReadGetObject",
+          "Effect" : "Allow",
+          "Principal" : "*",
+          "Action" : [
+            "s3:GetObject"
+          ],
+          "Resource" : [
+            "arn:aws:s3:::davids-airquality-static/*"
+          ]
         }
-    ]
-}
+      ]
+    }
   )
 }
 
@@ -73,11 +73,11 @@ module "template_files" {
 resource "aws_s3_bucket_object" "static_files" {
   for_each = module.template_files.files
 
-  bucket = resource.aws_s3_bucket.airquality_bucket.bucket
-  key = each.key
+  bucket       = resource.aws_s3_bucket.airquality_bucket.bucket
+  key          = each.key
   content_type = each.value.content_type
 
-  source= each.value.source_path
+  source  = each.value.source_path
   content = each.value.content
 
   etag = each.value.digests.md5
