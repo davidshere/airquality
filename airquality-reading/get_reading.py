@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from base import get_results
 
-API_URL = "https://3kwkbo4z21.execute-api.us-west-2.amazonaws.com/serverless_lambda_stage/data"
+API_URL = "https://h9wwkpmvlb.execute-api.us-west-2.amazonaws.com/prod/data"
 
 def write_result(device, pmi25, pmi10, recorded_at=None):
     return requests.post(
