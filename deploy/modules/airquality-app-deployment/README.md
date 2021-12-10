@@ -1,0 +1,1 @@
+Sets up the infrastructure for a serverless web app using S3 for static hosting and lambda/dynamodb for serving data.

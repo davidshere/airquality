@@ -8,36 +8,36 @@ data "archive_file" "lambda_airquality_archive" {
   }
 
   source {
-    content  = file("${path.module}/../airquality-api/app/response.py")
+    content  = file("${path.root}/../airquality-api/app/response.py")
     filename = "app/response.py"
   }
 
   source {
-    content  = file("${path.module}/../airquality-api/app/aqi.py")
+    content  = file("${path.root}/../airquality-api/app/aqi.py")
     filename = "app/aqi.py"
   }
 
   source {
-    content = file("${path.module}/../airquality-api/app/connection.py")
+    content = file("${path.root}/../airquality-api/app/connection.py")
     filename = "app/connection.py"
   }
 
   source {
-    content = file("${path.module}/../airquality-api/app/reading.py")
+    content = file("${path.root}/../airquality-api/app/reading.py")
     filename = "app/reading.py"
   }
 
   source {
-    content = file("${path.module}/../airquality-api/app/lambda.py")
+    content = file("${path.root}/../airquality-api/app/lambda.py")
     filename = "app/lambda.py"
   }
 
-  output_path = "${path.module}/airquality.zip"
+  output_path = "${path.root}/airquality.zip"
 }
 
 
 resource "aws_s3_bucket" "airquality_lambda_bucket" {
-  bucket = "airquality-lambda"
+  bucket = "airquality-lambda-${var.env}"
   acl    = "private"
 }
 
@@ -51,7 +51,7 @@ resource "aws_s3_bucket_object" "lambda_package" {
 
 # Defining the lambda function
 resource "aws_lambda_function" "airquality_app" {
-  function_name = "AirqualityWeb"
+  function_name = "airquality-web-${var.env}"
 
   s3_bucket = aws_s3_bucket.airquality_lambda_bucket.id
   s3_key    = aws_s3_bucket_object.lambda_package.key
@@ -79,7 +79,7 @@ resource "aws_cloudwatch_log_group" "airquality_web" {
 
 # IAM Roles and Policies
 resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+  name = "serverless_lambda_${var.env}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -100,7 +100,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 }
 
 resource "aws_iam_policy" "lambda_dynamo_read_policy" {
-  name        = "dynamo-read-policy"
+  name        = "dynamo-read-policy-${var.env}"
   description = "A policy to allow lambda to read a specific dynamo table"
 
   policy = jsonencode({
@@ -125,7 +125,7 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamo_read_policy_attachment"
 
 # API Gateway
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "serverless_lambda_gw"
+  name          = "airquality_gateway_${var.env}"
   protocol_type = "HTTP"
 
   cors_configuration {
@@ -140,7 +140,7 @@ resource "aws_apigatewayv2_api" "lambda" {
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "serverless_lambda_stage"
+  name        = "${var.env}"
   auto_deploy = true
 
   access_log_settings {
